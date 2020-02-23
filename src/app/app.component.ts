@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Observable, combineLatest } from 'rxjs';
 
 import { Organisation } from './interfaces/organisation';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { OrganisationService } from './services/organisation.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 
   public ngOnInit(): void {
     this.input = new FormControl('');
-    this.filter$ = this.input.valueChanges.pipe(startWith(''));
+    this.filter$ = this.input.valueChanges.pipe(startWith(''), debounceTime(1000), distinctUntilChanged());
     this.organisations$ = this.organisationService.getAllOrganisations();
 
     this.filteredOrganisations$ = combineLatest(
